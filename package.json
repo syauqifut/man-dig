@@ -1,0 +1,22 @@
+{
+  "name": "hidig",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/puppeteer": "^7.0.4",
+    "dotenv": "^16.4.5",
+    "puppeteer": "^22.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}
