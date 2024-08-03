@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer";
 import dotenv from "dotenv";
 import { ErrorMessage } from "./errorMessage";
 import { SearchResult } from "./models/searchResult";
@@ -6,29 +6,18 @@ import { SearchResult } from "./models/searchResult";
 dotenv.config();
 
 const scrapeFilmLists = async function scrapeFilms(
-  searchQuery: string
+  searchQuery: string,
+  browser: Browser
 ): Promise<SearchResult[]> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-infobars",
-      "--disable-extensions",
-      "--disable-gpu",
-      "--window-size=1280,800",
-    ],
-  });
-  const page = await browser.newPage();
-
-  const userAgent = process.env.USER_AGENT;
-  if (!userAgent) {
-    ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
-    return [];
-  }
-  await page.setUserAgent(userAgent);
-
   try {
+    const page = await browser.newPage();
+    const userAgent = process.env.USER_AGENT;
+    if (!userAgent) {
+      ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
+      return [];
+    }
+    await page.setUserAgent(userAgent);
+
     const baseUrl = process.env.FILM_SEARCH_URL;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("FILM_SEARCH_URL");
@@ -87,12 +76,12 @@ const scrapeFilmLists = async function scrapeFilms(
 };
 
 const scrapeAnimeLists = async function scrapeAnime(
-  searchQuery: string
+  searchQuery: string,
+  browser: Browser
 ): Promise<SearchResult[]> {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
   try {
+    const page = await browser.newPage();
+
     const baseUrl = process.env.ANIME_SEARCH_URL;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("ANIME_SEARCH_URL");
@@ -144,12 +133,12 @@ const scrapeAnimeLists = async function scrapeAnime(
 };
 
 const scrapeMangaLists = async function scrapeManga(
-  searchQuery: string
+  searchQuery: string,
+  browser: Browser
 ): Promise<SearchResult[]> {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
   try {
+    const page = await browser.newPage();
+
     const baseUrl = process.env.MANGA_SEARCH_URL;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("MANGA_SEARCH_URL");
@@ -201,28 +190,18 @@ const scrapeMangaLists = async function scrapeManga(
 };
 
 const scrapeBookLists = async function scrapeBook(
-  searchQuery: string
+  searchQuery: string,
+  browser: Browser
 ): Promise<SearchResult[]> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-infobars",
-      "--disable-extensions",
-      "--disable-gpu",
-      "--window-size=1280,800",
-    ],
-  });
-  const page = await browser.newPage();
-  const userAgent = process.env.USER_AGENT;
-  if (!userAgent) {
-    ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
-    return [];
-  }
-  await page.setUserAgent(userAgent);
-
   try {
+    const page = await browser.newPage();
+    const userAgent = process.env.USER_AGENT;
+    if (!userAgent) {
+      ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
+      return [];
+    }
+    await page.setUserAgent(userAgent);
+
     const baseUrl = process.env.BOOK_SEARCH_URL;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("BOOK_SEARCH_URL");
@@ -265,22 +244,18 @@ const scrapeBookLists = async function scrapeBook(
 };
 
 const scrapeGameLists = async function scrapeGame(
-  searchQuery: string
+  searchQuery: string,
+  browser: Browser
 ): Promise<SearchResult[]> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-infobars",
-      "--disable-extensions",
-      "--disable-gpu",
-      "--window-size=1280,800",
-    ],
-  });
-  const page = await browser.newPage();
-
   try {
+    const page = await browser.newPage();
+    const userAgent = process.env.USER_AGENT;
+    if (!userAgent) {
+      ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
+      return [];
+    }
+    await page.setUserAgent(userAgent);
+
     const baseUrl = process.env.GAME_SEARCH_URL;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("GAME_SEARCH_URL");
