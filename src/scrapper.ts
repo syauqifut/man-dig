@@ -1,17 +1,9 @@
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
 import { ErrorMessage } from "./errorMessage";
+import { SearchResult } from "./models/searchResult";
 
 dotenv.config();
-
-interface SearchResult {
-  title: string;
-  year: string;
-  type: string;
-  url: string;
-  image: string;
-  desc: string;
-}
 
 const scrapeFilmLists = async function scrapeFilms(
   searchQuery: string
