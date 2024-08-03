@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
+import { ErrorMessage } from "./errorMessage";
 
 dotenv.config();
 
@@ -30,26 +31,26 @@ const scrapeFilmLists = async function scrapeFilms(
 
   const userAgent = process.env.USER_AGENT;
   if (!userAgent) {
-    throw new Error("USER_AGENT is not defined in environment variables.");
+    ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
+    return [];
   }
   await page.setUserAgent(userAgent);
 
   try {
     const baseUrl = process.env.FILM_SEARCH_URL;
     if (!baseUrl) {
-      throw new Error(
-        "FILM_SEARCH_URL is not defined in environment variables."
-      );
+      ErrorMessage.EnvironmentNotFoundError("FILM_SEARCH_URL");
+      return [];
     }
 
     await page.goto(`${baseUrl}?q=${encodeURIComponent(searchQuery)}`, {
       waitUntil: "networkidle2",
-      timeout: 60000,
+      timeout: 10000,
     });
 
     await page.waitForSelector(
       'section[data-testid="find-results-section-title"]',
-      { timeout: 60000 }
+      { timeout: 10000 }
     );
 
     const searchResults = await page.evaluate(() => {
@@ -85,14 +86,10 @@ const scrapeFilmLists = async function scrapeFilms(
         };
       });
     });
-    console.log('batas senja');
-    console.log("Search Results:", searchResults);
 
     return searchResults;
   } catch (error) {
-    console.error("An error occurred during scraping:", error);
-    await page.screenshot({ path: "error-screenshot.png" });
-    console.log("Page content:", await page.content());
+    ErrorMessage.ScrapeError(error);
     return [];
   }
 };
@@ -106,21 +103,20 @@ const scrapeAnimeLists = async function scrapeAnime(
   try {
     const baseUrl = process.env.ANIME_SEARCH_URL;
     if (!baseUrl) {
-      throw new Error(
-        "ANIME_SEARCH_URL is not defined in environment variables."
-      );
+      ErrorMessage.EnvironmentNotFoundError("ANIME_SEARCH_URL");
+      return [];
     }
 
     await page.goto(
       `${baseUrl}?q=${encodeURIComponent(searchQuery)}&cat=anime`,
       {
         waitUntil: "networkidle2",
-        timeout: 60000,
+        timeout: 10000,
       }
     );
 
     await page.waitForSelector(".js-categories-seasonal tr", {
-      timeout: 60000,
+      timeout: 10000,
     });
 
     const searchResults = await page.evaluate(() => {
@@ -147,14 +143,10 @@ const scrapeAnimeLists = async function scrapeAnime(
           };
         });
     });
-    console.log('batas senja');
-    console.log("Search Results:", searchResults);
 
     return searchResults;
   } catch (error) {
-    console.error("An error occurred during scraping:", error);
-    await page.screenshot({ path: "error-screenshot.png" });
-    console.log("Page content:", await page.content());
+    ErrorMessage.ScrapeError(error);
     return [];
   }
 };
@@ -168,21 +160,20 @@ const scrapeMangaLists = async function scrapeManga(
   try {
     const baseUrl = process.env.MANGA_SEARCH_URL;
     if (!baseUrl) {
-      throw new Error(
-        "MANGA_SEARCH_URL is not defined in environment variables."
-      );
+      ErrorMessage.EnvironmentNotFoundError("MANGA_SEARCH_URL");
+      return [];
     }
 
     await page.goto(
       `${baseUrl}?q=${encodeURIComponent(searchQuery)}&cat=manga`,
       {
         waitUntil: "networkidle2",
-        timeout: 60000,
+        timeout: 10000,
       }
     );
 
     await page.waitForSelector(".js-categories-seasonal tr", {
-      timeout: 60000,
+      timeout: 10000,
     });
 
     const searchResults = await page.evaluate(() => {
@@ -209,14 +200,10 @@ const scrapeMangaLists = async function scrapeManga(
           };
         });
     });
-    console.log('batas senja');
-    console.log("Search Results:", searchResults);
 
     return searchResults;
   } catch (error) {
-    console.error("An error occurred during scraping:", error);
-    await page.screenshot({ path: "error-screenshot.png" });
-    console.log("Page content:", await page.content());
+    ErrorMessage.ScrapeError(error);
     return [];
   }
 };
@@ -238,27 +225,27 @@ const scrapeBookLists = async function scrapeBook(
   const page = await browser.newPage();
   const userAgent = process.env.USER_AGENT;
   if (!userAgent) {
-    throw new Error("USER_AGENT is not defined in environment variables.");
+    ErrorMessage.EnvironmentNotFoundError("USER_AGENT");
+    return [];
   }
   await page.setUserAgent(userAgent);
 
   try {
     const baseUrl = process.env.BOOK_SEARCH_URL;
     if (!baseUrl) {
-      throw new Error(
-        "BOOK_SEARCH_URL is not defined in environment variables."
-      );
+      ErrorMessage.EnvironmentNotFoundError("BOOK_SEARCH_URL");
+      return [];
     }
 
     await page.goto(
       `${baseUrl}?q=${encodeURIComponent(searchQuery)}&search_type=books`,
       {
         waitUntil: "networkidle2",
-        timeout: 60000,
+        timeout: 10000,
       }
     );
 
-    await page.waitForSelector(".tableList tr", { timeout: 60000 });
+    await page.waitForSelector(".tableList tr", { timeout: 10000 });
 
     const searchResults = await page.evaluate(() => {
       const results = document.querySelectorAll(".tableList tr");
@@ -277,14 +264,10 @@ const scrapeBookLists = async function scrapeBook(
         };
       });
     });
-    console.log('batas senja');
-    console.log("Search Results:", searchResults);
 
     return searchResults;
   } catch (error) {
-    console.error("An error occurred during scraping:", error);
-    await page.screenshot({ path: "error-screenshot.png" });
-    console.log("Page content:", await page.content());
+    ErrorMessage.ScrapeError(error);
     return [];
   }
 };
@@ -308,16 +291,15 @@ const scrapeGameLists = async function scrapeGame(
   try {
     const baseUrl = process.env.GAME_SEARCH_URL;
     if (!baseUrl) {
-      throw new Error(
-        "GAME_SEARCH_URL is not defined in environment variables."
-      );
+      ErrorMessage.EnvironmentNotFoundError("GAME_SEARCH_URL");
+      return [];
     }
     await page.goto(`${baseUrl}?term=${encodeURIComponent(searchQuery)}`, {
       waitUntil: "networkidle2",
-      timeout: 60000,
+      timeout: 10000,
     });
 
-    await page.waitForSelector(".search_result_row", { timeout: 60000 });
+    await page.waitForSelector(".search_result_row", { timeout: 10000 });
 
     const searchResults = await page.evaluate(() => {
       const results = document.querySelectorAll(".search_result_row");
@@ -338,14 +320,10 @@ const scrapeGameLists = async function scrapeGame(
         };
       });
     });
-    console.log('batas senja');
-    console.log("Search Results:", searchResults);
 
     return searchResults;
   } catch (error) {
-    console.error("An error occurred during scraping:", error);
-    await page.screenshot({ path: "error-screenshot.png" });
-    console.log("Page content:", await page.content());
+    ErrorMessage.ScrapeError(error);
     return [];
   }
 };
