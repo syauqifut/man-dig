@@ -50,6 +50,12 @@ app.get("/search", async (req, res) => {
 
     await browser.close();
 
+    results.sort((a, b) => {
+      if (a.data.length === 0) return 1;
+      if (b.data.length === 0) return -1;
+      return 0;
+    });
+
     res.json(results);
   } catch (error) {
     console.error(error);

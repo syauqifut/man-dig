@@ -19,6 +19,7 @@ const scrapeFilmLists = async function scrapeFilms(
     await page.setUserAgent(userAgent);
 
     const baseUrl = process.env.FILM_SEARCH_URL;
+    const targetUrl = process.env.FILM_DETAIL_URL as string;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("FILM_SEARCH_URL");
       return [];
@@ -34,7 +35,7 @@ const scrapeFilmLists = async function scrapeFilms(
       { timeout: 10000 }
     );
 
-    const searchResults = await page.evaluate(() => {
+    const searchResults = await page.evaluate((targetUrl) => {
       const results = document.querySelectorAll(
         'section[data-testid="find-results-section-title"] .find-result-item'
       );
@@ -57,16 +58,18 @@ const scrapeFilmLists = async function scrapeFilms(
           ".ipc-metadata-list-summary-item__stl .ipc-metadata-list-summary-item__li"
         );
 
+        const url = titleElement?.getAttribute("href") ? targetUrl+titleElement?.getAttribute("href") : "";
+
         return {
           title: titleElement?.textContent?.trim() || "",
           year: year,
-          url: titleElement?.getAttribute("href") || "",
+          url: url,
           type: type,
           image: imageElement?.getAttribute("src") || "",
           desc: actorsElement?.textContent?.trim() || "",
         };
       });
-    });
+    }, targetUrl);
 
     return searchResults;
   } catch (error) {
@@ -203,6 +206,7 @@ const scrapeBookLists = async function scrapeBook(
     await page.setUserAgent(userAgent);
 
     const baseUrl = process.env.BOOK_SEARCH_URL;
+    const targetUrl = process.env.BOOK_DETAIL_URL as string;
     if (!baseUrl) {
       ErrorMessage.EnvironmentNotFoundError("BOOK_SEARCH_URL");
       return [];
@@ -218,23 +222,24 @@ const scrapeBookLists = async function scrapeBook(
 
     await page.waitForSelector(".tableList tr", { timeout: 10000 });
 
-    const searchResults = await page.evaluate(() => {
+    const searchResults = await page.evaluate((targetUrl) => {
       const results = document.querySelectorAll(".tableList tr");
 
       return Array.from(results).map((row) => {
         const titleElement = row.querySelector(".bookTitle");
         const imageElement = row.querySelector("img.bookCover");
 
+        const url = titleElement?.getAttribute("href") ? targetUrl+titleElement?.getAttribute("href") : "";
         return {
           title: titleElement?.textContent?.trim() || "",
           year: "",
-          url: titleElement?.getAttribute("href") || "",
+          url: url,
           type: "Book",
           image: imageElement?.getAttribute("src") || "",
           desc: "",
         };
       });
-    });
+    }, targetUrl);
 
     return searchResults;
   } catch (error) {
